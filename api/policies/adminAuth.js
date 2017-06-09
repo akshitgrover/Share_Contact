@@ -11,10 +11,10 @@ module.exports = function(req, res, next) {
 
   // User is allowed, proceed to the next policy, 
   // or if this is the last policy, the controller
-  if (req.session.authenticated) {
+  if (req.session.admin) {
     return next();
   }
   else{
-  	res.redirect('/',{err:'Please Login!'})
+  	res.forbidden({err:'You Are Not An Admin!'})
   }
 };

@@ -20,11 +20,14 @@ module.exports = function (req, res, next) {
     // We delete the token from param to not mess with blueprints
     delete req.query.token;
   } else {
-    return res.json(401, {err: 'No Authorization header was found'});
+    console.log('Error!');
+    req.session.flash={err: 'You Don\'t Have A Token!'};
+    return res.redirect('/');
   }
 
   jwt.verify(token, function (err, token) {
-    if (err) return res.json(401, {err: 'Invalid Token!'});
+    req.session.flash={err: 'Invalid Token! Please Login Again!'};
+    if (err) return res.redirect('/');
     req.token = token; // This is the decrypted token or the payload you provided
     next();
   });

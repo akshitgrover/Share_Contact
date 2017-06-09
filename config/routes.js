@@ -39,7 +39,9 @@ module.exports.routes = {
   '/user/find/:token':'UserController.find',
   '/user/userlogin/:token':'UserController.userlogin',
   '/user/friend/:id/:token':'UserController.friend',
-  '/user/reqfind/:token':'UserController.reqfind'
+  '/user/reqfind/:token':'UserController.reqfind',
+  '/user/frifind/:token':'UserController.frifind',
+  
 
    /***************************************************************************
   *                                                                          *

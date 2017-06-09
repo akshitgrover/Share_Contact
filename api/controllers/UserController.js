@@ -13,7 +13,13 @@ module.exports = {
 			res.redirect('/');
 			return;
 		}
-		var param={name:req.param('name'),contact:req.param('contact'),password:req.param('password'),confirmpassword:req.param('confirmpassword')};
+		if(req.session.admin==false){
+			var admin=false;
+		}
+		else{
+			var admin=req.param('admin');
+		}
+		var param={name:req.param('name'),contact:req.param('contact'),password:req.param('password'),confirmpassword:req.param('confirmpassword'),admin:admin};
 		User.create(param,function(err,user){
 			if(err) console.log(err);
 			var array=[];
@@ -24,8 +30,12 @@ module.exports = {
 			array.push(req.param('skill4'));
 			user.skill=array;
 			user.save();
+			if(user.admin==true){
+				req.session.admin=true;
+			}
 			req.session.authenticated=true;
 			req.session.user=user;
+			console.log(user);
 			res.redirect('/user/userlogin/'+jwt.issue({id:user.id}));
 		});
 	},
@@ -38,13 +48,16 @@ module.exports = {
 	delete:function(req,res,next){
 		User.destroy(req.param('id'),function(err){
 			if(!err) console.log("User Deleted");
+			res.redirect('/user/adminpanel');
 		});
 	},
 	searchc:function(req,res,next){
 		User.findOne({contact:req.param('contact')},function(err,user){
 			delete user.password;
 			delete user.confirmpassword;
-			if(req.session.user.friends.indexOf(user.id)==-1){
+			console.log(req.session.user.friends);
+			console.log(req.session.user.friends.indexOf('15'));
+			if(req.session.user.friends.indexOf('15')==-1){
 				delete user.contact;
 			}
 			res.json({user:user});
@@ -111,7 +124,7 @@ module.exports = {
 	friend:function(req,res,next){
 		User.findOne(req.session.user.id,function(err,user){
 			if(req.session.user.request.indexOf(parseInt(req.param('id')))!=-1){
-				user.friends.push(req.param('id'));
+				user.friends.push(parseInt(req.param('id')));
 				user.request.splice(user.request.indexOf(parseInt(req.param('id'))));
 				user.save();
 				User.findOne(req.param('id'),function(err,user){
@@ -157,6 +170,14 @@ module.exports = {
 				if(resl){
 					req.session.authenticated=true;
 					req.session.user=user;
+					if(user.admin==false){
+						req.session.admin=false;
+					}
+					else if(user.admin==true){
+						req.session.admin=true;
+						res.redirect('/user/adminpanel');
+						return;
+					}
 					res.redirect('/user/userlogin/'+jwt.issue({id:user.id}));
 				}
 				else{

@@ -28,8 +28,15 @@ module.exports.policies = {
 
   // '*': true,
   User:{
-    'find':'tokenAuth',
-    'reqfind':'tokenAuth'
+    'find':['adminAuth'],
+    'reqfind':['tokenAuth','sessionAuth'],
+    'friend':['tokenAuth','sessionAuth'],
+    'userlogin':['tokenAuth','sessionAuth'],
+    'frifind':['tokenAuth','sessionAuth'],
+    'upvote':['sessionAuth'],
+    'delete':'adminAuth',
+    'adminpanel':'adminAuth'
+
   }
 
   /***************************************************************************

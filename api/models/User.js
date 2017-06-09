@@ -41,6 +41,10 @@ module.exports = {
   		type:'array',
   		defaultsTo:[]
   	},
+  	admin:{
+  		type:'boolean',
+  		defaultsTo:false
+  	}
   },
   beforeCreate:function(values,cb){
   	bcrypt.hash(values.password,10,function(err,hash){
